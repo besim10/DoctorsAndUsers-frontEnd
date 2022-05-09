@@ -1,13 +1,11 @@
-import { FC } from "react"
+import { FC } from "react";
+import Header from "../../main/components/Header";
+const Dashboard: FC = () => {
+  return (
+    <>
+      <Header />
+    </>
+  );
+};
 
-const DashboardPage : FC = ()=>{
-
-
-    return(
-        <>
-        Dashboard
-        </>
-    )
-}
-
-export default DashboardPage
+export default Dashboard;

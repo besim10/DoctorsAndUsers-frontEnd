@@ -1,0 +1,49 @@
+.login-wrapper{
+    display: grid;
+    background:url('../../app/images/banner_bg.png') no-repeat fixed;
+    height: 100vh;
+    place-content: center;
+}
+.login-container{
+    background-color: var(--secondary-color);
+    opacity: 0.8;
+    border-radius: 5px;
+    width: 400px;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    gap: 1rem;
+}
+.title{
+    color: var(--fourth-color);
+}
+.form{
+    color: var(--fourth-color);
+    display: grid;
+    gap: 1rem;
+}
+.form input{
+    padding: 0.4rem;
+    outline: none;
+}
+.form input:focus{
+    outline: 1px solid var(--primary-color);
+}
+.form label{
+    display: grid;
+    place-items: start;
+    gap: 0.4rem;
+}
+.form .submit-btn{
+    all: unset;
+    border: 1px solid var(--fourth-color);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    display: grid;
+    border-radius: 5px;
+    place-self: center;
+}
+.form .submit-btn:hover{
+    color: #584B53;
+    background-color: var(--fourth-color);
+}
