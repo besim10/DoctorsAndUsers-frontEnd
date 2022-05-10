@@ -1,31 +1,27 @@
 import AppNavigate from "./AppNavigate";
 import PrivateRoute from "./private-route";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import Dashboard from "../pages/dashboard";
-import Login from "../pages/login";
 import "./app.css";
+import Header from "../main/components/Header";
+import Modals from "../main/components/Modals";
+import Intro from "../pages/Intro";
+import Dashboard from "../pages/Dashboard";
 
 const App = () => {
   return (
     <BrowserRouter>
       <AppNavigate />
+      <Modals />
+      <Header />
       <Routes>
-        <Route index element={<Navigate to="/dashboard" />} />
+        <Route index element={<Navigate to="/intro" />} />
         <Route
-          path="/dashboard"
-          element={
-            // <PrivateRoute>
-            <Dashboard />
-            // </PrivateRoute>
-          }
+          path="/intro"
+          element={<PrivateRoute isPageLogin>{<Intro />}</PrivateRoute>}
         />
         <Route
-          path="/login"
-          element={
-            <PrivateRoute isPageLogin>
-              <Login />
-            </PrivateRoute>
-          }
+          path="/dashboard"
+          element={<PrivateRoute>{<Dashboard />}</PrivateRoute>}
         />
       </Routes>
     </BrowserRouter>
