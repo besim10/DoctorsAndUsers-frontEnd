@@ -1,0 +1,18 @@
+.intro-container {
+  display: grid;
+  place-content: center;
+  height: auto;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  height: 80vh;
+}
+.intro-container {
+  place-items: center;
+}
+.info-section {
+  letter-spacing: 1rem;
+  max-width: min-content;
+  text-align: center;
+  line-height: 2;
+}
+.image-section {
+}
