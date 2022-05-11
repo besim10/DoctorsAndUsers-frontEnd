@@ -4,10 +4,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setModal } from "../../store/stores/modal/modal.store";
-
+import useGetUser from "../../hooks/useGetUser";
+import { setUser } from "../../store/stores/user/user.store";
+import onLogout from "../../store/stores/user/login.store.on-logout";
+import ProfileIcon from "../ProfileIcon";
 function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const currentUser = useGetUser();
+
   return (
     <header>
       <nav className="navigation-header">
@@ -18,26 +24,44 @@ function Header() {
           </li>
         </ul>
         <ul className="login-section">
-          <li className="login-section__button">
-            <button
-              onClick={() => {
-                // setModal("sign-up");
-                dispatch(setModal("sign-up"));
-              }}
-            >
-              Sign Up
-            </button>
-          </li>
-          <li className="login-section__button">
-            <button
-              onClick={() => {
-                dispatch(setModal("log-in"));
-              }}
-            >
-              Log in
-            </button>
-          </li>
+          {currentUser === null ? (
+            <>
+              <li className="login-section__button">
+                <button
+                  onClick={() => {
+                    dispatch(setModal("sign-up"));
+                  }}
+                >
+                  Sign Up
+                </button>
+              </li>
+              <li className="login-section__button">
+                <button
+                  onClick={() => {
+                    dispatch(setModal("log-in"));
+                  }}
+                >
+                  Log in
+                </button>
+              </li>
+            </>
+          ) : (
+            <>
+              {currentUser.isDoctor ? (
+                <li>
+                  <h3>Welcome, {currentUser?.fullName}! 👨‍⚕️ </h3>
+                </li>
+              ) : (
+                <li>
+                  <h3>Welcome, {currentUser?.fullName}! 👤</h3>
+                </li>
+              )}
 
+              <li>
+                <ProfileIcon />
+              </li>
+            </>
+          )}
           <li className="login-section__info">
             <h3>Hot Line +38344255255</h3>
           </li>

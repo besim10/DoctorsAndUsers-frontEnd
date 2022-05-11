@@ -7,37 +7,12 @@ import { invalidateModal } from "../../../store/stores/modal/modal.store";
 import ILoginRequest from "../../../interfaces/ILoginRequest";
 import onLogin from "../../../store/stores/user/login.store.on-login";
 
-type Data = {
-  email: string;
-  password: string;
-};
-
 function SignIn() {
   const [error, setError] = useState("");
-
-  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
   function LogIn(data: ILoginRequest) {
-    // fetch(`http://localhost:8000/login`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(data),
-    // })
-    //   .then((resp) => resp.json())
-    //   .then((data) => {
-    //     if (data.admin) {
-    //       // setAdmin(data.admin);
-    //       localStorage.setItem("token", data.token);
-    //       navigate("/dashboard");
-    //       // setModal("success");
-    //     } else {
-    //       setError(data.error);
-    //     }
-    //   });
     try {
       dispatch(onLogin(data));
     } catch (err) {
@@ -86,7 +61,7 @@ function SignIn() {
               <input
                 type="email"
                 name="email"
-                className="transition"
+                className="normal-input"
                 required
               />
             </label>
@@ -94,7 +69,7 @@ function SignIn() {
               PASSWORD:
               <input
                 type="password"
-                className="transition"
+                className="normal-input"
                 name="password"
                 minLength={5}
                 required

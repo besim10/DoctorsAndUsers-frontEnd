@@ -1,18 +1,24 @@
-:root{
-    --primary-color: #50a2fd;
-    --secondary-color: #1d5e92;
-    --third-color: #849fb7;
-    --fourth-color: #f1f9ff;
+:root {
+  --primary-color: #50a2fd;
+  --secondary-color: #1d5e92;
+  --third-color: #849fb7;
+  --fourth-color: #f1f9ff;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
 
-*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    font-family: 'Open Sans', sans-serif;
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
 }
-img{
-    width: 100%;
+img {
+  width: 100%;
+}
+.default-wrapper {
+  background: url(./images/banner_bg.png) fixed no-repeat;
+  padding: 1rem;
+  height: auto;
+  height: 92vh;
 }

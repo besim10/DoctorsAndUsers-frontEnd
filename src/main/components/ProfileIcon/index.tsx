@@ -99,13 +99,13 @@ export default function AccountMenu() {
         <Divider />
         <MenuItem
           onClick={() => {
-            navigate("/bank-accounts");
+            navigate("/events");
           }}
         >
           <ListItemIcon>
             <EventNoteIcon sx={{ color: "#50a2fd" }} fontSize="medium" />
           </ListItemIcon>
-          My Appointments
+          My Events
         </MenuItem>
         <MenuItem onClick={handleClickLogOut}>
           <ListItemIcon>

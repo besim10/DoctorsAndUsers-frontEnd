@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { invalidateModal } from "../../../store/stores/modal/modal.store";
+import "./style.css";
 type Data = {
   fullName: string;
   email: string;
@@ -12,7 +13,7 @@ type Data = {
 };
 function SignUp() {
   const [error, setError] = useState("");
-
+  const [selectedOption, setSelectedOption] = useState("user");
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -86,7 +87,7 @@ function SignUp() {
               FULL NAME:
               <input
                 type="text"
-                className="transition"
+                className="normal-input"
                 name="fullName"
                 required
               />
@@ -96,7 +97,7 @@ function SignUp() {
               <input
                 type="email"
                 name="email"
-                className="transition"
+                className="normal-input"
                 required
               />
             </label>
@@ -105,19 +106,41 @@ function SignUp() {
               <input
                 type="password"
                 name="password"
-                className="transition"
+                className="normal-input"
                 required
               />
             </label>
-            <label>
-              AVATAR:
-              <input
-                type="text"
-                name="avatar"
-                className="transition"
-                required
-              />
-            </label>
+            Register as:
+            <div className="register-container-option">
+              <label className="register-option">
+                User
+                <input
+                  type="radio"
+                  name="user"
+                  onChange={(e) => {
+                    setSelectedOption(e.target.value);
+                  }}
+                  className="radio-class"
+                  checked={selectedOption === "user"}
+                  required
+                  value="user"
+                />
+              </label>
+              <label className="register-option">
+                Doctor
+                <input
+                  onChange={(e) => {
+                    setSelectedOption(e.target.value);
+                  }}
+                  checked={selectedOption === "doctor"}
+                  type="radio"
+                  name="doctor"
+                  className="radio-class"
+                  required
+                  value="doctor"
+                />
+              </label>
+            </div>
             {error !== "" ? <span className="email-error">{error}</span> : null}
             <button type="submit">SIGN UP</button>
           </form>

@@ -1,0 +1,16 @@
+.register-container-option {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 1rem;
+}
+.register-option {
+  cursor: pointer;
+  grid-auto-flow: column;
+  padding: 1rem 0rem;
+  border-radius: 5px;
+  border: 1px solid var(--secondary-color);
+  place-items: center;
+}
+.radio-class {
+  cursor: pointer;
+}

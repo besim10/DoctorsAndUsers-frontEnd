@@ -49,7 +49,7 @@ const axiosInit = async () => {
     if (error.response) {
       if (error.response.status === eHttpResponse.Unauthorized) {
         JwtManager.clearToken();
-        let urlRedirect = "/login";
+        let urlRedirect = "/intro";
         window.location.href = urlRedirect;
       }
       if (error.response.data?.message) {

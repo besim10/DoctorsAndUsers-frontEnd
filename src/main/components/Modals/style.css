@@ -41,13 +41,13 @@
   display: grid;
   gap: 0.5rem;
 }
-.modal-body form label input {
+.modal-body form label .normal-input {
   padding: 0.4rem;
   width: 260px;
   border: none;
   border-radius: 5px;
 }
-.modal-body form label input:focus {
+.modal-body form label .normal-input:focus {
   border: none;
   outline: 2px solid var(--primary-color);
 }
@@ -76,7 +76,4 @@
   border-radius: 50%;
   height: 45px;
   object-fit: cover;
-}
-.transition {
-  transition: ease-in 0.5s;
 }

@@ -11,13 +11,14 @@ initApp().then((appStore: any) => {
     <React.StrictMode>
       <Provider store={appStore}>
         <ToastContainer
-          autoClose={5000}
-          hideProgressBar={false}
+          autoClose={1500}
+          hideProgressBar={true}
           newestOnTop={false}
           closeOnClick
           rtl={false}
           pauseOnFocusLoss
           draggable
+          position={"top-center"}
           pauseOnHover
         />
         <App />

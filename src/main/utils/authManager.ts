@@ -30,6 +30,7 @@ class AuthManager {
     payload: ILoginRequest
   ): Promise<IUserInfo> {
     const { data } = await axios.post("authentication/login", payload);
+
     const user = await AuthManager.getUserFromToken(data.token);
 
     const responseLogin: IUserInfo = {
