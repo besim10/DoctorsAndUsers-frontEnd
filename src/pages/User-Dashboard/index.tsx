@@ -10,23 +10,33 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import useGetUser from "../../main/hooks/useGetUser";
-import IEvent from "../../main/interfaces/IEvent";
+import IUser from "../../main/interfaces/IUser";
 import axios from "axios";
+import UserModals from "./User-Modals";
 
 const UserDashboard: FC = () => {
-  const [events, setEvents] = useState<IEvent[]>([]);
+  const [doctors, setDoctors] = useState<IUser[]>([]);
+  const [selectedDoctor, setSelectedDoctor] = useState<IUser | null>(null);
+  const [modal, setModal] = useState("");
+  const [selectInfo, setSelectInfo] = useState<DateSelectArg | null>(null);
 
   const user = useGetUser();
 
   useEffect(() => {
-    getAllEvents();
+    getAllDoctors();
   }, []);
 
-  const getAllEvents = async () => {
-    const responseForEvents: IEvent[] = await (await axios.get("events")).data;
-    setEvents(responseForEvents);
+  const getAllDoctors = async () => {
+    const doctorsFromServer: IUser[] = await (await axios.get("doctors")).data;
+    setDoctors(doctorsFromServer);
   };
-
+  useEffect(() => {
+    if (doctors.length === 0) return;
+    const defaultDoctor = doctors?.find((doctor) =>
+      doctor.fullName.includes("Ed Putans")
+    );
+    setSelectedDoctor(defaultDoctor);
+  }, [doctors]);
   const todayDate = () => {
     let today = new Date();
     let dd = String(today.getDate()).padStart(2, "0");
@@ -36,27 +46,21 @@ const UserDashboard: FC = () => {
     const date = yyyy + "-" + mm + "-" + dd;
     return date;
   };
-  const handleDateSelect = (selectInfo: DateSelectArg) => {
-    let title = prompt("Please enter a new title for your event");
-    let calendarApi = selectInfo.view.calendar;
 
-    calendarApi.unselect(); // clear date selection
-
-    if (title) {
-      calendarApi.addEvent({
-        id: "3",
-        title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay,
-      });
-    }
+  const handleEventClick = (selectInfo: EventClickArg) => {
+    alert("Do u want to delete it?");
   };
-  const handleEvents = () => {
-    const allEvents = [...events];
 
+  const handleDateSelect = (selectInfo: DateSelectArg) => {
+    setSelectInfo(selectInfo);
+    setModal("add-event");
+  };
+
+  const handleEvents = () => {
     const returnedArray = [];
-    for (const event of allEvents) {
+
+    if (selectedDoctor === null) return [];
+    for (const event of selectedDoctor.recivedEvents) {
       const object = {
         title: event.title,
         start: event.start,
@@ -64,27 +68,61 @@ const UserDashboard: FC = () => {
         allDay: false,
         editable: user.id === event.userId,
         color: "#378006",
+        overlap: false,
         className: `${
           user.id === event.userId ? "my-color-events" : "others-color-events"
         }`,
       };
       returnedArray.push(object);
     }
-    console.log(returnedArray);
     return returnedArray;
   };
+  if (doctors.length === 0) return <h3>Loading...</h3>;
   return (
     <>
+      <UserModals
+        modal={modal}
+        setModal={setModal}
+        selectedDoctor={selectedDoctor}
+        setSelectedDoctor={setSelectedDoctor}
+        selectInfo={selectInfo}
+      />
       <h3 className="dashboard-title">User Dashboard</h3>
       <div className="dashboard-main">
         <section className="side-bar">
-          <h3 className="side-bar__title">Calendar</h3>
-          <h4 className="my-color-events">My events</h4>
-          <h4 className="others-color-events">Others Events</h4>
+          <div className="doctor-selection">
+            <h3>Select a Doctor!</h3>
+            <select
+              onChange={(e) => {
+                const doctor = doctors.find(
+                  (doctor) => doctor.id === Number(e.target.value)
+                );
+                setSelectedDoctor(doctor);
+              }}
+              name="doctors"
+              value={selectedDoctor?.id}
+            >
+              {doctors.map((doctor) => (
+                <option value={doctor.id} key={doctor.id}>
+                  {doctor.fullName}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="legenda">
+            <h3 className="side-bar__title">Legenda:</h3>
+            <h4 className="my-color-events">My events</h4>
+            <h4 className="others-color-events">Others Events</h4>
+          </div>
         </section>
         <section className="calendar">
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay",
+            }}
             initialView="dayGridMonth"
             editable={true}
             selectable={true}
@@ -93,12 +131,12 @@ const UserDashboard: FC = () => {
             dayMaxEvents={true}
             eventColor="#50a2fd"
             displayEventEnd={true}
-            // weekends={this.props.weekendsVisible}
+            weekends={false}
             // datesSet={this.handleDates}
             select={handleDateSelect}
             // events={this.props.events}
             // eventContent={renderEventContent} // custom render function
-            // eventClick={this.handleEventClick}
+            eventClick={handleEventClick}
             // eventAdd={this.handleEventAdd}
             // eventChange={this.handleEventChange} // called for drag-n-drop/resize
             // eventRemove={this.handleEventRemove}

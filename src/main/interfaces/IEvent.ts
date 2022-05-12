@@ -6,6 +6,6 @@ export default interface IEvent {
   end: string;
   userId: number;
   doctorId: number;
-  normalUser: IUser;
-  doctor: IUser;
+  normalUser?: IUser;
+  doctor?: IUser;
 }

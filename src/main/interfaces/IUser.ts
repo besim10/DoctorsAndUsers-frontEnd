@@ -5,7 +5,8 @@ interface IUser {
   email: string;
   password?: string;
   isDoctor: boolean;
-  postedEvents: IEvent[];
+  postedEvents?: IEvent[];
+  recivedEvents?: IEvent[];
 }
 
 export default IUser;

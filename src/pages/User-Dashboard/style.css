@@ -6,22 +6,20 @@
   grid-template-columns: 300px 1fr;
   gap: 1rem;
 }
-.calendar {
-  padding: 1rem;
-  box-shadow: 0px 0px 5px 2px var(--third-color);
-  border-radius: 5px;
-}
+
 .side-bar {
   background-color: var(--fourth-color);
   box-shadow: 0px 0px 5px 2px var(--third-color);
   border-radius: 5px;
   display: grid;
-  gap: 0.2rem;
+  gap: 1rem;
+  padding: 1rem;
   align-content: start;
 }
+
 .side-bar__title {
-  padding: 1rem;
   font-weight: normal;
+  padding-bottom: 0.5rem;
 }
 .my-color-events {
   background-color: var(--primary-color);
@@ -32,4 +30,9 @@
   background-color: var(--third-color);
   padding: 0.3rem 1rem;
   font-weight: normal;
+}
+.calendar {
+  padding: 1rem;
+  box-shadow: 0px 0px 5px 2px var(--third-color);
+  border-radius: 5px;
 }
