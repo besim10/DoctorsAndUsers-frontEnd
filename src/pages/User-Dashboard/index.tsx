@@ -5,6 +5,7 @@ import FullCalendar, {
   DateSelectArg,
   EventClickArg,
   EventContentArg,
+  CalendarApi,
 } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -13,17 +14,23 @@ import useGetUser from "../../main/hooks/useGetUser";
 import IUser from "../../main/interfaces/IUser";
 import axios from "axios";
 import UserModals from "./User-Modals";
+import React from "react";
 
 const UserDashboard: FC = () => {
   const [doctors, setDoctors] = useState<IUser[]>([]);
   const [selectedDoctor, setSelectedDoctor] = useState<IUser | null>(null);
   const [modal, setModal] = useState("");
   const [selectInfo, setSelectInfo] = useState<DateSelectArg | null>(null);
+  const [eventClick, setEventClick] = useState<EventClickArg | null>(null);
 
+  let calendarRef = React.createRef();
   const user = useGetUser();
 
   useEffect(() => {
     getAllDoctors();
+    return () => {
+      setDoctors([]);
+    };
   }, []);
 
   const getAllDoctors = async () => {
@@ -37,6 +44,7 @@ const UserDashboard: FC = () => {
     );
     setSelectedDoctor(defaultDoctor);
   }, [doctors]);
+
   const todayDate = () => {
     let today = new Date();
     let dd = String(today.getDate()).padStart(2, "0");
@@ -47,15 +55,28 @@ const UserDashboard: FC = () => {
     return date;
   };
 
-  const handleEventClick = (selectInfo: EventClickArg) => {
-    alert("Do u want to delete it?");
+  const handleEventClick = (eventClick: EventClickArg) => {
+    if (
+      selectedDoctor.recivedEvents.find((event) => event.userId === user.id)
+    ) {
+      setEventClick(eventClick);
+      setModal("delete-event");
+      // alert("Do u want to delete it?");
+    }
   };
 
   const handleDateSelect = (selectInfo: DateSelectArg) => {
-    setSelectInfo(selectInfo);
-    setModal("add-event");
-  };
+    //@ts-ignore
 
+    let calendarApi = calendarRef.current.getApi();
+    calendarApi.changeView("timeGridDay", selectInfo.startStr);
+
+    if (selectInfo.view.type === "timeGridDay") {
+      setSelectInfo(selectInfo);
+      setModal("add-event");
+    }
+  };
+  const handleDateClick = (info: any) => {};
   const handleEvents = () => {
     const returnedArray = [];
 
@@ -63,10 +84,12 @@ const UserDashboard: FC = () => {
     for (const event of selectedDoctor.recivedEvents) {
       const object = {
         title: event.title,
+        id: `${event.id}`,
         start: event.start,
         end: event.end,
         allDay: false,
-        editable: user.id === event.userId,
+        editable: false,
+        // editable: user.id === event.userId,
         color: "#378006",
         overlap: false,
         className: `${
@@ -86,6 +109,7 @@ const UserDashboard: FC = () => {
         selectedDoctor={selectedDoctor}
         setSelectedDoctor={setSelectedDoctor}
         selectInfo={selectInfo}
+        eventClick={eventClick}
       />
       <h3 className="dashboard-title">User Dashboard</h3>
       <div className="dashboard-main">
@@ -130,8 +154,11 @@ const UserDashboard: FC = () => {
             selectMirror={true}
             dayMaxEvents={true}
             eventColor="#50a2fd"
+            dateClick={handleDateClick}
             displayEventEnd={true}
             weekends={false}
+            //@ts-ignore
+            ref={calendarRef}
             // datesSet={this.handleDates}
             select={handleDateSelect}
             // events={this.props.events}

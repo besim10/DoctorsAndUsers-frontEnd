@@ -1,8 +1,6 @@
 import { DateSelectArg } from "@fullcalendar/react";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
-import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import useGetUser from "../../../../main/hooks/useGetUser";
@@ -23,18 +21,20 @@ function AddModal({
 }: Props) {
   const user = useGetUser();
 
+  const changeDateFormat = (date: string) => {
+    return date.substring(0, date.length - 6);
+  };
   const dispatch = useDispatch();
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     const data = {
       title: e.target.title.value,
-      start: `${selectInfo.startStr}T${e.target.startTime.value}:00`,
-      end: `${selectInfo.startStr}T${e.target.endTime.value}:00`,
+      start: changeDateFormat(selectInfo.startStr),
+      end: changeDateFormat(selectInfo.endStr),
       userId: user.id,
       doctorId: selectedDoctor.id,
     };
-
     const userFromServer = await (await axios.post("events", data)).data;
 
     if (!userFromServer.error) {
@@ -82,39 +82,21 @@ function AddModal({
             <label>
               START DATE:
               <input
-                type="date"
+                type="datetime-local"
                 className="normal-input"
                 name="startDate"
                 disabled
-                defaultValue={selectInfo.startStr}
-              />
-            </label>
-            <label>
-              Start Time:
-              <input
-                type="time"
-                name="startTime"
-                className="normal-input"
-                required
+                defaultValue={changeDateFormat(selectInfo.startStr)}
               />
             </label>
             <label>
               END DATE:
               <input
-                type="date"
+                type="datetime-local"
                 className="normal-input"
                 name="endDate"
-                defaultValue={selectInfo.endStr}
+                defaultValue={changeDateFormat(selectInfo.endStr)}
                 disabled
-              />
-            </label>
-            <label>
-              End Time:
-              <input
-                type="time"
-                name="endTime"
-                className="normal-input"
-                required
               />
             </label>
             <label>
