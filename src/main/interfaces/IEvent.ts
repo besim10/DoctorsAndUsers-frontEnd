@@ -8,4 +8,5 @@ export default interface IEvent {
   doctorId: number;
   normalUser?: IUser;
   doctor?: IUser;
+  status: string;
 }

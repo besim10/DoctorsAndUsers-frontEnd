@@ -6,15 +6,18 @@ import FullCalendar, {
   EventClickArg,
   EventContentArg,
   CalendarApi,
+  startOfDay,
 } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import useGetUser from "../../main/hooks/useGetUser";
+import todayDate from "../../main/helper-function";
 import IUser from "../../main/interfaces/IUser";
 import axios from "axios";
 import UserModals from "./User-Modals";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const UserDashboard: FC = () => {
   const [doctors, setDoctors] = useState<IUser[]>([]);
@@ -22,11 +25,15 @@ const UserDashboard: FC = () => {
   const [modal, setModal] = useState("");
   const [selectInfo, setSelectInfo] = useState<DateSelectArg | null>(null);
   const [eventClick, setEventClick] = useState<EventClickArg | null>(null);
+  const navigate = useNavigate();
 
-  let calendarRef = React.createRef();
   const user = useGetUser();
 
   useEffect(() => {
+    if (user.isDoctor) {
+      navigate(-1);
+      return;
+    }
     getAllDoctors();
     return () => {
       setDoctors([]);
@@ -45,30 +52,19 @@ const UserDashboard: FC = () => {
     setSelectedDoctor(defaultDoctor);
   }, [doctors]);
 
-  const todayDate = () => {
-    let today = new Date();
-    let dd = String(today.getDate()).padStart(2, "0");
-    let mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-    let yyyy = today.getFullYear();
-
-    const date = yyyy + "-" + mm + "-" + dd;
-    return date;
-  };
-
   const handleEventClick = (eventClick: EventClickArg) => {
     if (
-      selectedDoctor.recivedEvents.find((event) => event.userId === user.id)
+      user.postedEvents.find(
+        (event) => event.id === Number(eventClick.event._def.publicId)
+      )
     ) {
       setEventClick(eventClick);
       setModal("delete-event");
-      // alert("Do u want to delete it?");
     }
   };
 
   const handleDateSelect = (selectInfo: DateSelectArg) => {
-    //@ts-ignore
-
-    let calendarApi = calendarRef.current.getApi();
+    let calendarApi = selectInfo.view.calendar;
     calendarApi.changeView("timeGridDay", selectInfo.startStr);
 
     if (selectInfo.view.type === "timeGridDay") {
@@ -76,12 +72,24 @@ const UserDashboard: FC = () => {
       setModal("add-event");
     }
   };
-  const handleDateClick = (info: any) => {};
+
   const handleEvents = () => {
     const returnedArray = [];
 
     if (selectedDoctor === null) return [];
     for (const event of selectedDoctor.recivedEvents) {
+      let color = "";
+      switch (event.status) {
+        case "approved":
+          color = "#39c32f";
+          break;
+        case "refused":
+          color = "#d01212";
+          break;
+        default:
+          color = "#fc9605";
+      }
+
       const object = {
         title: event.title,
         id: `${event.id}`,
@@ -89,17 +97,18 @@ const UserDashboard: FC = () => {
         end: event.end,
         allDay: false,
         editable: false,
-        // editable: user.id === event.userId,
-        color: "#378006",
+        selectConstraint: {},
+        backgroundColor: `${user.id === event.userId ? color : "#849fb7"}`,
         overlap: false,
         className: `${
-          user.id === event.userId ? "my-color-events" : "others-color-events"
+          user.id !== event.userId ? "others-color-events" : `${event.status}`
         }`,
       };
       returnedArray.push(object);
     }
     return returnedArray;
   };
+
   if (doctors.length === 0) return <h3>Loading...</h3>;
   return (
     <>
@@ -135,8 +144,44 @@ const UserDashboard: FC = () => {
           </div>
           <div className="legenda">
             <h3 className="side-bar__title">Legenda:</h3>
-            <h4 className="my-color-events">My events</h4>
-            <h4 className="others-color-events">Others Events</h4>
+            <ul className="event-list">
+              <li>
+                <h4>
+                  My events <span>Total: {user.postedEvents.length}</span>
+                </h4>
+              </li>
+              <li className="event-list__item pending">
+                Pending
+                <span>
+                  {
+                    user.postedEvents.filter((event) =>
+                      event.status.includes("pending")
+                    ).length
+                  }
+                </span>
+              </li>
+              <li className="event-list__item approved">
+                Approved
+                <span>
+                  {
+                    user.postedEvents.filter((event) =>
+                      event.status.includes("approved")
+                    ).length
+                  }
+                </span>
+              </li>
+              <li className="event-list__item refused">
+                Refused
+                <span>
+                  {
+                    user.postedEvents.filter((event) =>
+                      event.status.includes("refused")
+                    ).length
+                  }
+                </span>
+              </li>
+            </ul>
+            <div className="others-color-events">Others Events</div>
           </div>
         </section>
         <section className="calendar">
@@ -153,30 +198,19 @@ const UserDashboard: FC = () => {
             validRange={{ start: todayDate(), end: "2023-01-01" }}
             selectMirror={true}
             dayMaxEvents={true}
-            eventColor="#50a2fd"
-            dateClick={handleDateClick}
             displayEventEnd={true}
             weekends={false}
-            //@ts-ignore
-            ref={calendarRef}
-            // datesSet={this.handleDates}
             select={handleDateSelect}
-            // events={this.props.events}
-            // eventContent={renderEventContent} // custom render function
             eventClick={handleEventClick}
-            // eventAdd={this.handleEventAdd}
-            // eventChange={this.handleEventChange} // called for drag-n-drop/resize
-            // eventRemove={this.handleEventRemove}
-            // events={[
+            events={handleEvents()}
+            // businessHours={[
             //   {
-            //     // this object will be "parsed" into an Event Object
-            //     title: "The Title", // a property!
-            //     allDay: false,
-            //     start: "2022-05-12T10:00:00",
-            //     end: "2022-05-12T16:00:00",
+            //     startTime: "08:00",
+            //     endTime: "18:00",
+            //     daysOfWeek: [1, 2, 3, 4, 5],
             //   },
             // ]}
-            events={handleEvents()}
+            // selectConstraint={"businessHours"}
           />
         </section>
       </div>

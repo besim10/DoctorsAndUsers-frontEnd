@@ -14,17 +14,39 @@
   display: grid;
   gap: 1rem;
   padding: 1rem;
-  align-content: start;
+  align-self: start;
 }
-
+.legenda {
+  display: grid;
+  gap: 2rem;
+  padding: 1rem;
+  border-radius: 5px;
+  border: 1px solid var(--secondary-color);
+}
+.event-list {
+  list-style-type: none;
+}
+.event-list span {
+  text-align: end;
+  float: right;
+}
+.event-list__item {
+  padding: 0.7rem 0.5rem;
+  color: var(--fourth-color);
+}
 .side-bar__title {
   font-weight: normal;
   padding-bottom: 0.5rem;
 }
-.my-color-events {
-  background-color: var(--primary-color);
-  font-weight: normal;
-  padding: 0.3rem 1rem;
+
+.pending {
+  background-color: #fc9605;
+}
+.refused {
+  background-color: #d01212;
+}
+.approved {
+  background-color: #39c32f;
 }
 .others-color-events {
   background-color: var(--third-color);

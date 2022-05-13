@@ -12,6 +12,7 @@ type Props = {
   selectedDoctor: IUser;
   setSelectedDoctor: Function;
   eventClick: EventClickArg;
+  //   children: React.ReactNode
 };
 function DeleteModal({
   setModal,
