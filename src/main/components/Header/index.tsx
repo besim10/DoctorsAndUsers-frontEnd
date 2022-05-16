@@ -1,6 +1,6 @@
 import logo from "../../../app/images/logo.png";
 import "./style.css";
-import { useState } from "react";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setModal } from "../../store/stores/modal/modal.store";
@@ -8,11 +8,15 @@ import useGetUser from "../../hooks/useGetUser";
 import { setUser } from "../../store/stores/user/user.store";
 import onLogout from "../../store/stores/user/login.store.on-logout";
 import ProfileIcon from "../ProfileIcon";
+
 function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const currentUser = useGetUser();
+  const pendingEvents = () =>
+    currentUser.recivedEvents.filter((event) =>
+      event.status.includes("pending")
+    );
 
   return (
     <header>
@@ -48,22 +52,36 @@ function Header() {
           ) : (
             <>
               {currentUser.isDoctor ? (
-                <li>
-                  <h3>Welcome, {currentUser?.fullName}! 👨‍⚕️ </h3>
-                </li>
+                <>
+                  <li>
+                    <h3>Welcome, {currentUser?.fullName}! 👨‍⚕️ </h3>
+                  </li>
+                  <li
+                    className="notification-container"
+                    onClick={() => {
+                      dispatch(setModal("notification"));
+                    }}
+                  >
+                    <span className="events-length">
+                      {pendingEvents().length}
+                    </span>
+                    <NotificationsIcon
+                      sx={{ fontSize: "2.2rem", color: "#1d5e92" }}
+                    />
+                  </li>
+                </>
               ) : (
                 <li>
                   <h3>Welcome, {currentUser?.fullName}! 👤</h3>
                 </li>
               )}
-
               <li>
                 <ProfileIcon />
               </li>
             </>
           )}
           <li className="login-section__info">
-            <h3>Hot Line +38344255255</h3>
+            <h3>Support +38344255255</h3>
           </li>
         </ul>
       </nav>

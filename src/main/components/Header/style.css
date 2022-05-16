@@ -34,3 +34,19 @@
   padding: 1rem;
   font-weight: 200;
 }
+.notification-container {
+  cursor: pointer;
+  position: relative;
+}
+.events-length {
+  position: absolute;
+  right: 0;
+  background-color: red;
+  color: white;
+  font-weight: bold;
+  display: grid;
+  place-content: center;
+  width: 20px;
+  border-radius: 1rem;
+  height: 20px;
+}

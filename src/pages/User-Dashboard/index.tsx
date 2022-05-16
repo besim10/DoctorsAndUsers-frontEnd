@@ -12,7 +12,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import useGetUser from "../../main/hooks/useGetUser";
-import todayDate from "../../main/helper-function";
+import { todayDate } from "../../main/helper-functions";
 import IUser from "../../main/interfaces/IUser";
 import axios from "axios";
 import UserModals from "./User-Modals";
@@ -26,6 +26,7 @@ const UserDashboard: FC = () => {
   const [selectInfo, setSelectInfo] = useState<DateSelectArg | null>(null);
   const [eventClick, setEventClick] = useState<EventClickArg | null>(null);
   const navigate = useNavigate();
+  const calendarRef = React.createRef();
 
   const user = useGetUser();
 
@@ -192,25 +193,45 @@ const UserDashboard: FC = () => {
               center: "title",
               right: "dayGridMonth,timeGridWeek,timeGridDay",
             }}
+            //@ts-ignore
+            ref={calendarRef}
             initialView="dayGridMonth"
             editable={true}
             selectable={true}
             validRange={{ start: todayDate(), end: "2023-01-01" }}
             selectMirror={true}
             dayMaxEvents={true}
+            height="auto"
+            eventTimeFormat={{
+              hour: "2-digit", //2-digit, numeric
+              minute: "2-digit", //2-digit, numeric
+              hour12: false, //true, false
+            }}
+            slotMinTime={"08:00:00"}
+            slotMaxTime={"16:00:00"}
             displayEventEnd={true}
             weekends={false}
+            allDaySlot={false}
+            selectOverlap={() => {
+              //@ts-ignore
+              let calendarApi = calendarRef.current.getApi();
+              if (calendarApi.view.type === "timeGridDay") {
+                return false;
+              }
+              return true;
+            }}
+            selectAllow={(selectInfo) => {
+              let startDate = selectInfo.start;
+              let endDate = selectInfo.end;
+              endDate.setSeconds(endDate.getSeconds() - 1); // allow full day selection
+              if (startDate.getDate() === endDate.getDate()) {
+                return true;
+              }
+              return false;
+            }}
             select={handleDateSelect}
             eventClick={handleEventClick}
             events={handleEvents()}
-            // businessHours={[
-            //   {
-            //     startTime: "08:00",
-            //     endTime: "18:00",
-            //     daysOfWeek: [1, 2, 3, 4, 5],
-            //   },
-            // ]}
-            // selectConstraint={"businessHours"}
           />
         </section>
       </div>

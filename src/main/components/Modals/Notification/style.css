@@ -1,0 +1,18 @@
+.events-list-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.events-list-table__row,
+.events-list-table__data {
+  border: 1px solid #ddd;
+  text-align: left;
+  padding: 8px;
+}
+.events-list-table__row th {
+  padding: 12px 5px;
+  background-color: var(--secondary-color);
+  color: white;
+}
+.events-options {
+  cursor: pointer;
+}

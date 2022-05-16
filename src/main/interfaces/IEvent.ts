@@ -4,7 +4,7 @@ export default interface IEvent {
   title: string;
   start: string;
   end: string;
-  userId: number;
+  userId?: number;
   doctorId: number;
   normalUser?: IUser;
   doctor?: IUser;

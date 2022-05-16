@@ -1,27 +1,49 @@
-import FullCalendar, { DateSelectArg } from "@fullcalendar/react";
-import { FC, useEffect } from "react";
+import FullCalendar, {
+  DateSelectArg,
+  EventClickArg,
+} from "@fullcalendar/react";
+import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useGetUser from "../../main/hooks/useGetUser";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import todayDate from "../../main/helper-function";
+import { todayDate } from "../../main/helper-functions";
+import { useDispatch } from "react-redux";
+import { setModal } from "../../main/store/stores/modal/modal.store";
+import React from "react";
 const DoctorDashboard: FC = () => {
   const navigate = useNavigate();
+  const calendarRef = React.createRef();
+  const [eventClick, setEventClick] = useState<EventClickArg | null>(null);
   const user = useGetUser();
+  const dispatch = useDispatch();
   useEffect(() => {
     if (!user.isDoctor) {
       navigate(-1);
     }
+    if (
+      user.recivedEvents.filter((event) => event.status.includes("pending"))
+        .length > 0
+    ) {
+      dispatch(setModal("notification"));
+    }
   }, []);
   const handleDateSelect = (selectInfo: DateSelectArg) => {
     let calendarApi = selectInfo.view.calendar;
-    calendarApi.changeView("timeGridDay", selectInfo.startStr);
 
+    // console.log(calendarAPI2.view.type);
+    calendarApi.changeView("timeGridDay", selectInfo.startStr);
     if (selectInfo.view.type === "timeGridDay") {
+      calendarApi.setOption("selectOverlap", () => false);
       // setSelectInfo(selectInfo);
       // setModal("add-event");
     }
+  };
+  const handleEventClick = (eventClick: EventClickArg) => {
+    setEventClick(eventClick);
+
+    setModal("delete-event");
   };
   const handleEvents = () => {
     const returnedArray = [];
@@ -54,6 +76,7 @@ const DoctorDashboard: FC = () => {
     }
     return returnedArray;
   };
+
   return (
     <>
       <h3 className="dashboard-title">Doctor Dashboard</h3>
@@ -109,23 +132,44 @@ const DoctorDashboard: FC = () => {
               center: "title",
               right: "dayGridMonth,timeGridWeek,timeGridDay",
             }}
+            //@ts-ignore
+            ref={calendarRef}
             initialView="dayGridMonth"
             editable={true}
             selectable={true}
             validRange={{ start: todayDate(), end: "2023-01-01" }}
             selectMirror={true}
             dayMaxEvents={true}
+            height="auto"
+            eventTimeFormat={{
+              hour: "2-digit", //2-digit, numeric
+              minute: "2-digit", //2-digit, numeric
+              hour12: false, //true, false
+            }}
+            slotMinTime={"08:00:00"}
+            slotMaxTime={"16:00:00"}
+            allDaySlot={false}
             displayEventEnd={true}
-            businessHours={[
-              {
-                startTime: "08:00",
-                endTime: "18:00",
-                daysOfWeek: [1, 2, 3, 4, 5],
-              },
-            ]}
+            selectOverlap={() => {
+              //@ts-ignore
+              let calendarApi = calendarRef.current.getApi();
+              if (calendarApi.view.type === "timeGridDay") {
+                return false;
+              }
+              return true;
+            }}
+            selectAllow={(selectInfo) => {
+              let startDate = selectInfo.start;
+              let endDate = selectInfo.end;
+              endDate.setSeconds(endDate.getSeconds() - 1); // allow full day selection
+              if (startDate.getDate() === endDate.getDate()) {
+                return true;
+              }
+              return false;
+            }}
             weekends={false}
             select={handleDateSelect}
-            // eventClick={handleEventClick}
+            eventClick={handleEventClick}
             events={handleEvents()}
           />
         </section>
@@ -135,3 +179,6 @@ const DoctorDashboard: FC = () => {
 };
 
 export default DoctorDashboard;
+function setEventClick(eventClick: EventClickArg) {
+  throw new Error("Function not implemented.");
+}
