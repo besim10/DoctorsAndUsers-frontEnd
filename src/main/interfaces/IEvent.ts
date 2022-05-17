@@ -5,8 +5,10 @@ export default interface IEvent {
   start: string;
   end: string;
   userId?: number;
-  doctorId: number;
   normalUser?: IUser;
+  doctorId?: number;
   doctor?: IUser;
+  doctorPostedId?: number;
+  doctorPosted?: IUser;
   status: string;
 }

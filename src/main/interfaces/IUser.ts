@@ -7,6 +7,7 @@ interface IUser {
   isDoctor: boolean;
   postedEvents?: IEvent[];
   recivedEvents?: IEvent[];
+  doctorPostedEvents?: IEvent[];
 }
 
 export default IUser;

@@ -1,9 +1,9 @@
 .modal-wrapper {
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.541);
+  background-color: rgba(3, 3, 3, 0.407);
   display: grid;
-  backdrop-filter: blur(1px);
+  backdrop-filter: blur(2px);
   place-content: center;
   position: fixed;
   z-index: 20;
@@ -51,7 +51,7 @@
   border: none;
   outline: 2px solid var(--primary-color);
 }
-.modal-body form button {
+.submit-btn {
   border: none;
   padding: 1rem;
   border-radius: 2rem;

@@ -142,7 +142,9 @@ function SignUp() {
               </label>
             </div>
             {error !== "" ? <span className="email-error">{error}</span> : null}
-            <button type="submit">SIGN UP</button>
+            <button className="submit-btn" type="submit">
+              SIGN UP
+            </button>
           </form>
         </main>
       </div>

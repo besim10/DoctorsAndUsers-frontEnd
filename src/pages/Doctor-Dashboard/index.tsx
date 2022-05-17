@@ -5,17 +5,20 @@ import FullCalendar, {
 import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useGetUser from "../../main/hooks/useGetUser";
+import { setGlobalModal } from "../../main/store/stores/modal/modal.store";
+import DoctorModals from "./Doctor-Modals";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { todayDate } from "../../main/helper-functions";
 import { useDispatch } from "react-redux";
-import { setModal } from "../../main/store/stores/modal/modal.store";
 import React from "react";
 const DoctorDashboard: FC = () => {
   const navigate = useNavigate();
   const calendarRef = React.createRef();
   const [eventClick, setEventClick] = useState<EventClickArg | null>(null);
+  const [selectInfo, setSelectInfo] = useState<DateSelectArg | null>(null);
+  const [modal, setModal] = useState("");
   const user = useGetUser();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -26,24 +29,22 @@ const DoctorDashboard: FC = () => {
       user.recivedEvents.filter((event) => event.status.includes("pending"))
         .length > 0
     ) {
-      dispatch(setModal("notification"));
+      dispatch(setGlobalModal("notification"));
     }
   }, []);
   const handleDateSelect = (selectInfo: DateSelectArg) => {
     let calendarApi = selectInfo.view.calendar;
 
-    // console.log(calendarAPI2.view.type);
     calendarApi.changeView("timeGridDay", selectInfo.startStr);
     if (selectInfo.view.type === "timeGridDay") {
       calendarApi.setOption("selectOverlap", () => false);
-      // setSelectInfo(selectInfo);
-      // setModal("add-event");
+      setSelectInfo(selectInfo);
+      setModal("add-event");
     }
   };
   const handleEventClick = (eventClick: EventClickArg) => {
     setEventClick(eventClick);
-
-    setModal("delete-event");
+    setModal("actions");
   };
   const handleEvents = () => {
     const returnedArray = [];
@@ -74,11 +75,31 @@ const DoctorDashboard: FC = () => {
       };
       returnedArray.push(object);
     }
+    for (const event of user.doctorPostedEvents) {
+      const object = {
+        title: event.title,
+        id: `${event.id}`,
+        start: event.start,
+        end: event.end,
+        allDay: false,
+        editable: false,
+        overlap: false,
+        backgroundColor: "#8f73b1",
+        className: "free-time",
+      };
+      returnedArray.push(object);
+    }
     return returnedArray;
   };
 
   return (
     <>
+      <DoctorModals
+        modal={modal}
+        setModal={setModal}
+        eventClick={eventClick}
+        selectInfo={selectInfo}
+      />
       <h3 className="dashboard-title">Doctor Dashboard</h3>
       <div className="dashboard-main">
         <section className="side-bar">
@@ -120,6 +141,10 @@ const DoctorDashboard: FC = () => {
                     ).length
                   }
                 </span>
+              </li>
+              <li className="event-list__item free-time">
+                My free time
+                <span>{user.doctorPostedEvents.length}</span>
               </li>
             </ul>
           </div>

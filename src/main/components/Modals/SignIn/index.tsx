@@ -78,7 +78,9 @@ function SignIn() {
             {error !== "" ? (
               <span className="password-error">{error}</span>
             ) : null}
-            <button type="submit">LOG IN</button>
+            <button className="submit-btn" type="submit">
+              LOG IN
+            </button>
           </form>
         </main>
       </div>

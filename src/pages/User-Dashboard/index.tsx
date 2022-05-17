@@ -75,9 +75,8 @@ const UserDashboard: FC = () => {
   };
 
   const handleEvents = () => {
-    const returnedArray = [];
-
     if (selectedDoctor === null) return [];
+    const returnedArray = [];
     for (const event of selectedDoctor.recivedEvents) {
       let color = "";
       switch (event.status) {
@@ -98,12 +97,26 @@ const UserDashboard: FC = () => {
         end: event.end,
         allDay: false,
         editable: false,
-        selectConstraint: {},
         backgroundColor: `${user.id === event.userId ? color : "#849fb7"}`,
         overlap: false,
         className: `${
           user.id !== event.userId ? "others-color-events" : `${event.status}`
         }`,
+      };
+      returnedArray.push(object);
+    }
+
+    for (const event of selectedDoctor.doctorPostedEvents) {
+      const object = {
+        title: event.title,
+        id: `${event.id}`,
+        start: event.start,
+        end: event.end,
+        allDay: false,
+        editable: false,
+        backgroundColor: `#8f73b1`,
+        overlap: false,
+        className: "free-time",
       };
       returnedArray.push(object);
     }
@@ -181,6 +194,10 @@ const UserDashboard: FC = () => {
                   }
                 </span>
               </li>
+              <li className="event-list__item free-time">
+                Free time
+                <span></span>
+              </li>
             </ul>
             <div className="others-color-events">Others Events</div>
           </div>
@@ -223,7 +240,7 @@ const UserDashboard: FC = () => {
             selectAllow={(selectInfo) => {
               let startDate = selectInfo.start;
               let endDate = selectInfo.end;
-              endDate.setSeconds(endDate.getSeconds() - 1); // allow full day selection
+              endDate.setSeconds(endDate.getSeconds() - 1);
               if (startDate.getDate() === endDate.getDate()) {
                 return true;
               }

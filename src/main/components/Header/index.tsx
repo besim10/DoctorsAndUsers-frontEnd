@@ -3,15 +3,12 @@ import "./style.css";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setModal } from "../../store/stores/modal/modal.store";
+import { setGlobalModal } from "../../store/stores/modal/modal.store";
 import useGetUser from "../../hooks/useGetUser";
-import { setUser } from "../../store/stores/user/user.store";
-import onLogout from "../../store/stores/user/login.store.on-logout";
 import ProfileIcon from "../ProfileIcon";
 
 function Header() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const currentUser = useGetUser();
   const pendingEvents = () =>
     currentUser.recivedEvents.filter((event) =>
@@ -33,7 +30,7 @@ function Header() {
               <li className="login-section__button">
                 <button
                   onClick={() => {
-                    dispatch(setModal("sign-up"));
+                    dispatch(setGlobalModal("sign-up"));
                   }}
                 >
                   Sign Up
@@ -42,7 +39,7 @@ function Header() {
               <li className="login-section__button">
                 <button
                   onClick={() => {
-                    dispatch(setModal("log-in"));
+                    dispatch(setGlobalModal("log-in"));
                   }}
                 >
                   Log in
@@ -59,7 +56,7 @@ function Header() {
                   <li
                     className="notification-container"
                     onClick={() => {
-                      dispatch(setModal("notification"));
+                      dispatch(setGlobalModal("notification"));
                     }}
                   >
                     <span className="events-length">

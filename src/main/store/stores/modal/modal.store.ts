@@ -4,7 +4,7 @@ const modalStore = createSlice({
   name: "modal",
   initialState: "",
   reducers: {
-    setModal(_state, action: PayloadAction<string>) {
+    setGlobalModal(_state, action: PayloadAction<string>) {
       return action.payload;
     },
     invalidateModal() {
@@ -15,4 +15,4 @@ const modalStore = createSlice({
 
 export default modalStore;
 
-export const { setModal, invalidateModal } = modalStore.actions;
+export const { setGlobalModal, invalidateModal } = modalStore.actions;

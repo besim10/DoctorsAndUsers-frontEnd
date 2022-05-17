@@ -1,0 +1,23 @@
+.options-modal-body {
+  display: grid;
+  gap: 1rem;
+}
+.edit-btn {
+  background-color: var(--third-color);
+}
+.refuse-btn {
+  background-color: #d01212;
+}
+.approve-btn {
+  background-color: #39c32f;
+}
+.edit-form {
+  background-color: var(--third-color);
+  padding: 1rem;
+  border-radius: 5px;
+}
+.react-timerange-picker__wrapper {
+  background-color: white;
+  border-radius: 5px;
+  padding: 0.5rem;
+}
