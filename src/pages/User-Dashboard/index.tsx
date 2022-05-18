@@ -68,9 +68,20 @@ const UserDashboard: FC = () => {
     let calendarApi = selectInfo.view.calendar;
     calendarApi.changeView("timeGridDay", selectInfo.startStr);
 
+    calendarApi.unselect();
     if (selectInfo.view.type === "timeGridDay") {
-      setSelectInfo(selectInfo);
-      setModal("add-event");
+      const start = selectInfo.start;
+      const end = selectInfo.end;
+
+      const startHours = start.getHours();
+      const endHours = end.getHours();
+
+      if (endHours - startHours <= 1) {
+        setSelectInfo(selectInfo);
+        setModal("add-event");
+      } else {
+        alert("Error");
+      }
     }
   };
 
@@ -228,6 +239,7 @@ const UserDashboard: FC = () => {
             slotMaxTime={"16:00:00"}
             displayEventEnd={true}
             weekends={false}
+            // slotDuration={"01:00"}
             allDaySlot={false}
             selectOverlap={() => {
               //@ts-ignore
