@@ -109,7 +109,9 @@ function AddModal({
                 value={selectedDoctor.fullName}
               />
             </label>
-            <button type="submit">CREATE EVENT</button>
+            <button type="submit" className="submit-btn">
+              CREATE EVENT
+            </button>
           </form>
         </main>
       </div>

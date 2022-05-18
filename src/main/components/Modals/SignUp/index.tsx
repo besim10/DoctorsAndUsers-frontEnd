@@ -2,6 +2,7 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import onRegister from "../../../store/stores/user/register.store.on-register";
 import { useDispatch } from "react-redux";
 import { invalidateModal } from "../../../store/stores/modal/modal.store";
 import "./style.css";
@@ -9,7 +10,7 @@ type Data = {
   fullName: string;
   email: string;
   password: string;
-  avatar: string;
+  isDoctor: string;
 };
 function SignUp() {
   const [error, setError] = useState("");
@@ -43,15 +44,15 @@ function SignUp() {
     const fullName = e.target.fullName.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
-    const avatar = e.target.avatar.value;
+    const isDoctor = selectedOption === "doctor";
     const data = {
       fullName,
       email,
       password,
-      avatar,
+      isDoctor,
     };
 
-    register(data);
+    dispatch(onRegister(data));
   };
   return (
     <div
@@ -122,7 +123,6 @@ function SignUp() {
                   }}
                   className="radio-class"
                   checked={selectedOption === "user"}
-                  required
                   value="user"
                 />
               </label>
@@ -136,7 +136,6 @@ function SignUp() {
                   type="radio"
                   name="doctor"
                   className="radio-class"
-                  required
                   value="doctor"
                 />
               </label>

@@ -1,9 +1,8 @@
 import "./style.css";
 import AddModal from "./AddModal";
-import DeleteModal from "./DeleteModal";
 import IUser from "../../../main/interfaces/IUser";
 import { DateSelectArg, EventClickArg } from "@fullcalendar/react";
-
+import Actions from "./Actions";
 type Props = {
   modal: string;
   setModal: Function;
@@ -31,13 +30,12 @@ function UserModals({
           selectInfo={selectInfo}
         />
       );
-    case "delete-event":
+    case "actions":
       return (
-        <DeleteModal
-          selectedDoctor={selectedDoctor}
-          setSelectedDoctor={setSelectedDoctor}
+        <Actions
           setModal={setModal}
           eventClick={eventClick}
+          setSelectedDoctor={setSelectedDoctor}
         />
       );
     default:

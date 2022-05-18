@@ -38,6 +38,7 @@ const DoctorDashboard: FC = () => {
     calendarApi.changeView("timeGridDay", selectInfo.startStr);
     if (selectInfo.view.type === "timeGridDay") {
       calendarApi.setOption("selectOverlap", () => false);
+      console.log(selectInfo);
       setSelectInfo(selectInfo);
       setModal("add-event");
     }
@@ -205,5 +206,8 @@ const DoctorDashboard: FC = () => {
 
 export default DoctorDashboard;
 function setEventClick(eventClick: EventClickArg) {
+  throw new Error("Function not implemented.");
+}
+function selectAllow(arg0: (e: DateSelectArg) => boolean): any {
   throw new Error("Function not implemented.");
 }

@@ -11,9 +11,10 @@ import { useState } from "react";
 type Props = {
   setModal: Function;
   eventClick: EventClickArg;
+  setSelectedDoctor: Function;
   //   children: React.ReactNode
 };
-function Actions({ setModal, eventClick }: Props) {
+function Actions({ setModal, eventClick, setSelectedDoctor }: Props) {
   const [optionSelected, setOptionSelected] = useState(false);
 
   const dispatch = useDispatch();
@@ -34,23 +35,13 @@ function Actions({ setModal, eventClick }: Props) {
   let startTime = formatedStartDate[1];
   let endTime = formatedEndDate[1];
 
-  const updateEventStatus = async (status: string) => {
-    const eventId = eventClick.event._def.publicId;
-
-    const response = await axios.put(`events/${eventId}`, { status: status });
-    if (!response.data.error) {
-      dispatch(setUser(response.data.updatedUser));
-      toast.success("Succesfully updated status");
-      setModal("");
-    } else {
-      alert(response.data.error);
-    }
-  };
   const handleDeleteEvent = async () => {
     const eventId = eventClick.event._def.publicId;
 
     const dataFromServer = await (await axios.delete(`events/${eventId}`)).data;
+    console.log(dataFromServer);
     if (!dataFromServer.error) {
+      setSelectedDoctor(dataFromServer.updatedDoctor);
       dispatch(setUser(dataFromServer.updatedUser));
       toast.success(dataFromServer.msg);
       setModal("");
@@ -61,6 +52,7 @@ function Actions({ setModal, eventClick }: Props) {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
+    const title = e.target.title.value;
     const date = e.target.date.value;
     const startTime = e.target.startTime.value;
     const endTime = e.target.endTime.value;
@@ -69,9 +61,14 @@ function Actions({ setModal, eventClick }: Props) {
 
     const start = `${date}T${startTime}`;
     const end = `${date}T${endTime}`;
-    console.log(startTime, endTime);
-    const response = await axios.put(`events/${eventId}`, { start, end });
+
+    const response = await axios.put(`events/${eventId}`, {
+      start,
+      end,
+      title,
+    });
     if (!response.data.error) {
+      setSelectedDoctor(response.data.updatedDoctor);
       dispatch(setUser(response.data.updatedUser));
       toast.success("Succesfully updated status");
       setModal("");
@@ -115,6 +112,17 @@ function Actions({ setModal, eventClick }: Props) {
           {optionSelected ? (
             <form className="edit-form" onSubmit={handleSubmit}>
               <label>
+                TITLE:
+                <input
+                  type="text"
+                  className="normal-input"
+                  name="title"
+                  minLength={5}
+                  required
+                  defaultValue={eventClick.event._def.title}
+                />
+              </label>
+              <label>
                 DATE:
                 <input
                   type="date"
@@ -156,22 +164,6 @@ function Actions({ setModal, eventClick }: Props) {
             </form>
           ) : null}
 
-          <button
-            onClick={() => {
-              updateEventStatus("refused");
-            }}
-            className="general-button refuse-btn"
-          >
-            Refuse
-          </button>
-          <button
-            onClick={() => {
-              updateEventStatus("approved");
-            }}
-            className="general-button approve-btn"
-          >
-            Approve
-          </button>
           <button
             onClick={handleDeleteEvent}
             className="general-button delete-btn"

@@ -60,7 +60,7 @@ const UserDashboard: FC = () => {
       )
     ) {
       setEventClick(eventClick);
-      setModal("delete-event");
+      setModal("actions");
     }
   };
 
