@@ -21,4 +21,5 @@ img {
   padding: 1rem;
   height: auto;
   height: 92vh;
+  z-index: 20;
 }

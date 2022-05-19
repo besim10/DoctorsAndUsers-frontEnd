@@ -1,23 +1,21 @@
 import { FC, useEffect, useState } from "react";
 import "./style.css";
 import FullCalendar, {
-  EventApi,
   DateSelectArg,
   EventClickArg,
-  EventContentArg,
-  CalendarApi,
-  startOfDay,
 } from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import useGetUser from "../../main/hooks/useGetUser";
 import { todayDate } from "../../main/helper-functions";
+import { motion } from "framer-motion";
 import IUser from "../../main/interfaces/IUser";
 import axios from "axios";
 import UserModals from "./User-Modals";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const UserDashboard: FC = () => {
   const [doctors, setDoctors] = useState<IUser[]>([]);
@@ -68,19 +66,27 @@ const UserDashboard: FC = () => {
     let calendarApi = selectInfo.view.calendar;
     calendarApi.changeView("timeGridDay", selectInfo.startStr);
 
-    calendarApi.unselect();
     if (selectInfo.view.type === "timeGridDay") {
+      const selectedDate = selectInfo.startStr.split("T")[0];
+      const matchedDate = user.postedEvents.find(
+        (event) =>
+          event.start.split("T")[0] === selectedDate &&
+          event.doctorId === selectedDoctor.id
+      );
+      if (matchedDate) {
+        toast.error("Maximum is 1 Event/day");
+        return;
+      }
       const start = selectInfo.start;
       const end = selectInfo.end;
 
       const startHours = start.getHours();
       const endHours = end.getHours();
-
-      if (endHours - startHours <= 1) {
+      if (endHours - startHours <= 2) {
         setSelectInfo(selectInfo);
         setModal("add-event");
       } else {
-        alert("Error");
+        toast.error("Maximum duration for Event is 2 Hours!");
       }
     }
   };
@@ -147,7 +153,11 @@ const UserDashboard: FC = () => {
       />
       <h3 className="dashboard-title">User Dashboard</h3>
       <div className="dashboard-main">
-        <section className="side-bar">
+        <motion.section
+          initial={{ opacity: 0, x: -200 }}
+          animate={{ opacity: 1, x: 0, transition: { delay: 1, duration: 2 } }}
+          className="side-bar"
+        >
           <div className="doctor-selection">
             <h3>Select a Doctor!</h3>
             <select
@@ -172,15 +182,18 @@ const UserDashboard: FC = () => {
             <ul className="event-list">
               <li>
                 <h4>
-                  My events <span>Total: {user.postedEvents.length}</span>
+                  My events
+                  <span>Total: {selectedDoctor?.recivedEvents.length}</span>
                 </h4>
               </li>
               <li className="event-list__item pending">
                 Pending
                 <span>
                   {
-                    user.postedEvents.filter((event) =>
-                      event.status.includes("pending")
+                    selectedDoctor?.recivedEvents.filter(
+                      (event) =>
+                        event.status.includes("pending") &&
+                        event.userId === user.id
                     ).length
                   }
                 </span>
@@ -206,14 +219,27 @@ const UserDashboard: FC = () => {
                 </span>
               </li>
               <li className="event-list__item free-time">
-                Free time
-                <span></span>
+                Doctor free Event
+                <span>{selectedDoctor?.doctorPostedEvents.length}</span>
+              </li>
+              <li className="event-list__item others-color-events">
+                Others Events
+                <span>
+                  {
+                    selectedDoctor?.recivedEvents.filter(
+                      (event) => event.userId !== user.id
+                    ).length
+                  }
+                </span>
               </li>
             </ul>
-            <div className="others-color-events">Others Events</div>
           </div>
-        </section>
-        <section className="calendar">
+        </motion.section>
+        <motion.section
+          initial={{ opacity: 0, y: 850 }}
+          animate={{ opacity: 1, y: 0, transition: { duration: 2 } }}
+          className="calendar"
+        >
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             headerToolbar={{
@@ -239,7 +265,7 @@ const UserDashboard: FC = () => {
             slotMaxTime={"16:00:00"}
             displayEventEnd={true}
             weekends={false}
-            // slotDuration={"01:00"}
+            slotDuration="01:00:00"
             allDaySlot={false}
             selectOverlap={() => {
               //@ts-ignore
@@ -262,7 +288,7 @@ const UserDashboard: FC = () => {
             eventClick={handleEventClick}
             events={handleEvents()}
           />
-        </section>
+        </motion.section>
       </div>
     </>
   );

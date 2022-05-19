@@ -4,6 +4,8 @@ import FullCalendar, {
 } from "@fullcalendar/react";
 import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+
 import useGetUser from "../../main/hooks/useGetUser";
 import { setGlobalModal } from "../../main/store/stores/modal/modal.store";
 import DoctorModals from "./Doctor-Modals";
@@ -103,7 +105,15 @@ const DoctorDashboard: FC = () => {
       />
       <h3 className="dashboard-title">Doctor Dashboard</h3>
       <div className="dashboard-main">
-        <section className="side-bar">
+        <motion.section
+          initial={{ opacity: 0, x: -200 }}
+          animate={{
+            opacity: 1,
+            x: 0,
+            transition: { delay: 1, duration: 2 },
+          }}
+          className="side-bar"
+        >
           <div className="doctor-selection"></div>
           <div className="legenda">
             <h3 className="side-bar__title">Legenda:</h3>
@@ -149,8 +159,12 @@ const DoctorDashboard: FC = () => {
               </li>
             </ul>
           </div>
-        </section>
-        <section className="calendar">
+        </motion.section>
+        <motion.section
+          initial={{ opacity: 0, y: 850 }}
+          animate={{ opacity: 1, y: 0, transition: { duration: 2 } }}
+          className="calendar"
+        >
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             headerToolbar={{
@@ -198,7 +212,7 @@ const DoctorDashboard: FC = () => {
             eventClick={handleEventClick}
             events={handleEvents()}
           />
-        </section>
+        </motion.section>
       </div>
     </>
   );

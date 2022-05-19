@@ -9,17 +9,19 @@ import { toast } from "react-toastify";
 const onLogin =
   (payload: ILoginRequest): AppThunk =>
   async (dispatch) => {
-    try {
-      const response = await AuthManager.loginWithCredentials({ ...payload });
-      if (response.user && response.token) {
-        dispatch(setUser(response.user));
-        dispatch(navigateTo("/"));
-        dispatch(invalidateModal());
-        toast.success("Succesfully Signed In");
-      }
-    } catch (err: any) {
-      return err;
+    // try {
+    const response = await AuthManager.loginWithCredentials({ ...payload });
+    if (response.user && response.token) {
+      dispatch(setUser(response.user));
+      dispatch(navigateTo("/"));
+      dispatch(invalidateModal());
+      toast.success("Succesfully Signed In");
     }
+
+    // } catch (err: any) {
+    //   console.log(err);
+    //   return err;
+    // }
   };
 
 export default onLogin;

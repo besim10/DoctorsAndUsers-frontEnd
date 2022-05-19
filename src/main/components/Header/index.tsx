@@ -1,10 +1,11 @@
 import logo from "../../../app/images/logo.png";
 import "./style.css";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setGlobalModal } from "../../store/stores/modal/modal.store";
 import useGetUser from "../../hooks/useGetUser";
+import { motion } from "framer-motion";
 import ProfileIcon from "../ProfileIcon";
 
 function Header() {
@@ -16,12 +17,22 @@ function Header() {
     );
 
   return (
-    <header>
+    <motion.header
+      initial={{ opacity: 0, y: -50, marginTop: -200 }}
+      animate={{ opacity: 1, y: 0, marginTop: 0, transition: { delay: 0.5 } }}
+    >
       <nav className="navigation-header">
         <ul className="logo-section">
           <li className="logo-section__item">
             <img src={logo} />
             <h1>Medica+</h1>
+            {currentUser ? (
+              currentUser.isDoctor ? (
+                <Link to="/doctor-dashboard">Dashboard</Link>
+              ) : (
+                <Link to="/user-dashboard">Dashboard</Link>
+              )
+            ) : null}
           </li>
         </ul>
         <ul className="login-section">
@@ -82,7 +93,7 @@ function Header() {
           </li>
         </ul>
       </nav>
-    </header>
+    </motion.header>
   );
 }
 export default Header;

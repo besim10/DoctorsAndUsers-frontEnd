@@ -7,6 +7,7 @@ import { todayDate } from "../../../../main/helper-functions";
 import { toast } from "react-toastify";
 import { setUser } from "../../../../main/store/stores/user/user.store";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Props = {
   setModal: Function;
@@ -39,7 +40,7 @@ function Actions({ setModal, eventClick, setSelectedDoctor }: Props) {
     const eventId = eventClick.event._def.publicId;
 
     const dataFromServer = await (await axios.delete(`events/${eventId}`)).data;
-    console.log(dataFromServer);
+
     if (!dataFromServer.error) {
       setSelectedDoctor(dataFromServer.updatedDoctor);
       dispatch(setUser(dataFromServer.updatedUser));
@@ -57,6 +58,7 @@ function Actions({ setModal, eventClick, setSelectedDoctor }: Props) {
     const startTime = e.target.startTime.value;
     const endTime = e.target.endTime.value;
 
+    console.log(date);
     const eventId = eventClick.event._def.publicId;
 
     const start = `${date}T${startTime}`;
@@ -77,102 +79,124 @@ function Actions({ setModal, eventClick, setSelectedDoctor }: Props) {
     }
   };
   return (
-    <div
-      onClick={() => {
-        setModal("");
-      }}
-      className="modal-wrapper"
-    >
-      <div
-        onClick={(e) => {
-          e.stopPropagation();
+    <AnimatePresence>
+      <motion.div
+        initial={{
+          opacity: 0,
         }}
-        className="modal-container delete-modal-container"
+        animate={{ opacity: 1, transition: { duration: 0.5 } }}
+        onClick={() => {
+          setModal("");
+        }}
+        exit={{ opacity: 0, transition: { delay: 0.3 } }}
+        className="modal-wrapper"
       >
-        <header className="modal-header">
-          <CloseIcon
-            fontSize="large"
-            className="close-icon"
-            sx={{ color: "#50a2fd" }}
-            onClick={() => {
-              setModal("");
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1, transition: { duration: 0.3 } }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          exit={{ scale: 0, transition: { delay: 0.3 } }}
+          className="modal-container delete-modal-container"
+        >
+          <header className="modal-header">
+            <CloseIcon
+              fontSize="large"
+              className="close-icon"
+              sx={{ color: "#50a2fd" }}
+              onClick={() => {
+                setModal("");
+              }}
+            />
+            <h2>What do u want to do?</h2>
+          </header>
+          <motion.main
+            initial={{
+              x: 100,
+              opacity: 0,
             }}
-          />
-          <h2>What do u want to do?</h2>
-        </header>
-        <main className="modal-body options-modal-body">
-          <button
-            onClick={() => {
-              setOptionSelected(!optionSelected);
+            animate={{
+              x: 0,
+              opacity: 1,
+              transition: { delay: 0.5, duration: 0.3 },
             }}
-            className="general-button edit-btn"
+            className="modal-body options-modal-body"
           >
-            Edit
-          </button>
-          {optionSelected ? (
-            <form className="edit-form" onSubmit={handleSubmit}>
-              <label>
-                TITLE:
-                <input
-                  type="text"
-                  className="normal-input"
-                  name="title"
-                  minLength={5}
-                  required
-                  defaultValue={eventClick.event._def.title}
-                />
-              </label>
-              <label>
-                DATE:
-                <input
-                  type="date"
-                  className="normal-input"
-                  name="date"
-                  min={todayDate()}
-                  max={"2023-01-01"}
-                  required
-                  defaultValue={startDate}
-                />
-              </label>
-              <label>
-                Start Time
-                <input
-                  type="time"
-                  className="normal-input"
-                  name="startTime"
-                  min={"08:00:00"}
-                  max={"16:00:00"}
-                  required
-                  defaultValue={startTime}
-                />
-              </label>
-              <label>
-                End Time
-                <input
-                  type="time"
-                  className="normal-input"
-                  name="endTime"
-                  min={"08:00:00"}
-                  max={"16:00:00"}
-                  required
-                  defaultValue={endTime}
-                />
-              </label>
-              <button className="submit-btn" type="submit">
-                UPDATE EVENT
-              </button>
-            </form>
-          ) : null}
+            <button
+              onClick={() => {
+                setOptionSelected(!optionSelected);
+              }}
+              className="general-button edit-btn"
+            >
+              Edit
+            </button>
+            {optionSelected ? (
+              <form className="edit-form" onSubmit={handleSubmit}>
+                <label>
+                  TITLE:
+                  <input
+                    type="text"
+                    className="normal-input"
+                    name="title"
+                    minLength={5}
+                    required
+                    defaultValue={eventClick.event._def.title}
+                  />
+                </label>
+                <label>
+                  DATE:
+                  <input
+                    type="date"
+                    className="normal-input"
+                    name="date"
+                    min={todayDate()}
+                    max={"2023-01-01"}
+                    required
+                    defaultValue={startDate}
+                  />
+                </label>
+                <label>
+                  Start Time
+                  <input
+                    type="time"
+                    list="04:33"
+                    className="normal-input"
+                    name="startTime"
+                    min={"08:00:00"}
+                    max={"16:00:00"}
+                    required
+                    defaultValue={startTime}
+                  />
+                </label>
+                <label>
+                  End Time
+                  <input
+                    type="time"
+                    className="normal-input"
+                    name="endTime"
+                    min={"08:00:00"}
+                    max={"16:00:00"}
+                    required
+                    defaultValue={endTime}
+                  />
+                </label>
+                <button className="submit-btn" type="submit">
+                  UPDATE EVENT
+                </button>
+              </form>
+            ) : null}
 
-          <button
-            onClick={handleDeleteEvent}
-            className="general-button delete-btn"
-          >
-            Delete
-          </button>
-        </main>
-      </div>
-    </div>
+            <button
+              onClick={handleDeleteEvent}
+              className="general-button delete-btn"
+            >
+              Delete
+            </button>
+          </motion.main>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 export default Actions;

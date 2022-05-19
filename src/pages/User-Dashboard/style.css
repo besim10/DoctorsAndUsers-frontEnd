@@ -50,8 +50,7 @@
 }
 .others-color-events {
   background-color: var(--third-color);
-  padding: 0.3rem 1rem;
-  font-weight: normal;
+  width: 100%;
 }
 .free-time {
   background-color: #8f73b1;

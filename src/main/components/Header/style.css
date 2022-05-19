@@ -1,6 +1,7 @@
 .navigation-header {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-auto-flow: column;
+  place-content: space-between;
   padding-right: 1rem;
   box-shadow: 5px 0px 5px 3px #dedfe0;
 }
@@ -8,10 +9,26 @@
 .logo-section__item {
   display: grid;
   align-items: center;
-  grid-template-columns: 70px auto;
+  grid-auto-flow: column;
+}
+.logo-section__item img {
+  width: 70px;
 }
 .logo-section__item h1 {
+  margin-right: 1rem;
   color: var(--secondary-color);
+}
+.logo-section__item a {
+  border: 1px solid var(--secondary-color);
+  text-decoration: none;
+  color: var(--secondary-color);
+  padding: 0.5rem;
+}
+.logo-section__item a:hover {
+  background-color: var(--secondary-color);
+  color: white;
+  transform: scale(1.1);
+  transition: ease-in-out 0.5s;
 }
 .login-section {
   display: grid;
